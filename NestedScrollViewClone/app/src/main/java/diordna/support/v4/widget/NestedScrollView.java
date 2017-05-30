@@ -39,7 +39,6 @@ import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v4.view.accessibility.AccessibilityRecordCompat;
 import android.support.v4.widget.EdgeEffectCompat;
-import android.support.v4.widget.ScrollerCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -57,6 +56,8 @@ import android.widget.FrameLayout;
 import android.widget.ScrollView;
 
 import java.util.List;
+
+import diordna.widget.OverScroller;
 
 import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
@@ -98,7 +99,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
     private long mLastScroll;
 
     private final Rect mTempRect = new Rect();
-    private ScrollerCompat mScroller;
+    private OverScroller mScroller;
     private EdgeEffectCompat mEdgeGlowTop;
     private EdgeEffectCompat mEdgeGlowBottom;
 
@@ -358,7 +359,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
     }
 
     private void initScrollView() {
-        mScroller = ScrollerCompat.create(getContext(), null);
+        mScroller = new OverScroller(getContext(), null);
         setFocusable(true);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         setWillNotDraw(false);
