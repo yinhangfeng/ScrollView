@@ -611,6 +611,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.i(TAG, "onInterceptTouchEvent: " + ev);
         /*
          * This method JUST determines whether we want to intercept the motion.
          * If we return true, onMotionEvent will be called and we do the actual
@@ -655,6 +656,8 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                 final int yDiff = Math.abs(y - mLastMotionY);
                 if (yDiff > mTouchSlop
                         && (getNestedScrollAxes() & ViewCompat.SCROLL_AXIS_VERTICAL) == 0) {
+                    // 拦截事件情况2: yDiff达到mTouchSlop 且不处于y方向的nested scroll
+                    // 如果处于y方向的nested scroll 则说明某个子view在处理事件并能发送nested scroll 不应该拦截
                     mIsBeingDragged = true;
                     mLastMotionY = y;
                     initVelocityTrackerIfNotExists();
@@ -675,6 +678,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                     recycleVelocityTracker();
                     break;
                 }
+//                Log.i(TAG, "onInterceptTouchEvent: ACTION_DOWN inChild");
 
                 /*
                  * Remember location of down touch.
@@ -692,7 +696,10 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                  * isFinished() is correct.
                 */
                 mScroller.computeScrollOffset();
+                // 拦截事件情况1: ACTION_DOWN时处于flinged
                 mIsBeingDragged = !mScroller.isFinished();
+                // 如果处于flinged mIsBeingDragged为true 拦截事件 进入onTouchEvent ACTION_DOWN同样会调用startNestedScroll
+                // 所以感觉重复了 但startNestedScroll是允许重复调用的
                 startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
                 break;
             }
@@ -722,6 +729,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        Log.i(TAG, "onTouchEvent: " + ev);
         initVelocityTrackerIfNotExists();
 
         MotionEvent vtev = MotionEvent.obtain(ev);
@@ -738,6 +746,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                 if (getChildCount() == 0) {
                     return false;
                 }
+//                Log.i(TAG, "onTouchEvent: ACTION_DOWN getChildCount() > 0");
                 if ((mIsBeingDragged = !mScroller.isFinished())) {
                     final ViewParent parent = getParent();
                     if (parent != null) {
@@ -768,6 +777,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
 
                 final int y = (int) ev.getY(activePointerIndex);
                 int deltaY = mLastMotionY - y;
+                // 在mIsBeingDragged 为false时也调用dispatchNestedPreScroll
                 if (dispatchNestedPreScroll(0, deltaY, mScrollConsumed, mScrollOffset)) {
                     deltaY -= mScrollConsumed[1];
                     vtev.offsetLocation(0, mScrollOffset[1]);
@@ -841,6 +851,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                             mActivePointerId);
 
                     if ((Math.abs(initialVelocity) > mMinimumVelocity)) {
+                        // flingWithNestedDispatch 没有考虑springBack 感觉有问题
                         flingWithNestedDispatch(-initialVelocity);
                     } else if (mScroller.springBack(getScrollX(), getScrollY(), 0, 0, 0,
                             getScrollRange())) {
@@ -946,11 +957,16 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
         super.scrollTo(scrollX, scrollY);
     }
 
+    // View.overScrollBy 的兼容
     boolean overScrollByCompat(int deltaX, int deltaY,
             int scrollX, int scrollY,
             int scrollRangeX, int scrollRangeY,
             int maxOverScrollX, int maxOverScrollY,
             boolean isTouchEvent) {
+
+        // XXX
+        maxOverScrollY = getHeight() / 4;
+
         final int overScrollMode = getOverScrollMode();
         final boolean canScrollHorizontal =
                 computeHorizontalScrollRange() > computeHorizontalScrollExtent();
@@ -995,9 +1011,11 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
             clampedY = true;
         }
 
-        if (clampedY) {
-            mScroller.springBack(newScrollX, newScrollY, 0, 0, 0, getScrollRange());
-        }
+//        Log.i(TAG, "overScrollByCompat: clampedY:" + clampedY + " newScrollY:" + newScrollY + " getScrollRange:" + getScrollRange());
+        // 强制OverScroll时springBack
+//        if (clampedY) {
+//            mScroller.springBack(newScrollX, newScrollY, 0, 0, 0, getScrollRange());
+//        }
 
         onOverScrolled(newScrollX, newScrollY, clampedX, clampedY);
 
@@ -1431,6 +1449,8 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
             int x = mScroller.getCurrX();
             int y = mScroller.getCurrY();
 
+            Log.i(TAG, "computeScroll: oldY:" + oldY + " y:" + y);
+
             if (oldX != x || oldY != y) {
                 final int range = getScrollRange();
                 final int overscrollMode = getOverScrollMode();
@@ -1705,7 +1725,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
             int bottom = getChildAt(0).getHeight();
 
             mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, 0,
-                    Math.max(0, bottom - height), 0, height / 2);
+                    Math.max(0, bottom - height), 0, /* height / 2 */ height / 4); // XXX 修改overY
 
             ViewCompat.postInvalidateOnAnimation(this);
         }
@@ -1717,9 +1737,10 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                 && (scrollY < getScrollRange() || velocityY < 0);
         if (!dispatchNestedPreFling(0, velocityY)) {
             dispatchNestedFling(0, velocityY, canFling);
-            if (canFling) {
+            // XXX
+//            if (canFling) {
                 fling(velocityY);
-            }
+//            }
         }
     }
 

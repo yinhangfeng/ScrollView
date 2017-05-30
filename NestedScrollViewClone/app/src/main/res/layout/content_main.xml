@@ -39,6 +39,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="#78909c"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ef5350"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ab47bc"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#42a5f5"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#4db6ac"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ffee58"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#78909c"/>
         </LinearLayout>
     </diordna.support.v4.widget.NestedScrollView>
 
