@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="diordna.support.nestedscrollviewclone.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+    <diordna.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ef5350"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ab47bc"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#42a5f5"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#4db6ac"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ffee58"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#78909c"/>
+        </LinearLayout>
+    </diordna.support.v4.widget.NestedScrollView>
+
+</android.support.constraint.ConstraintLayout>
