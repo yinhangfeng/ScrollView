@@ -740,9 +740,9 @@ public class OverScroller {
             // TODO take velocity into account
             mVelocity = -delta; // only sign is used
             mOver = Math.abs(delta);
+            mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / mDeceleration));
             // XXX
-//            mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / mDeceleration));
-            mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / mDeceleration) * 0.6);
+//            mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / mDeceleration) * 0.6);
         }
 
         void fling(int start, int velocity, int min, int max, int over) {
@@ -857,9 +857,9 @@ public class OverScroller {
             // mStart, mVelocity and mStartTime were adjusted to their values when edge was reached.
             // The float cast below is necessary to avoid integer overflow.
             final float velocitySquared = (float) mVelocity * mVelocity;
+            float distance = velocitySquared / (2.0f * Math.abs(mDeceleration));
             // XXX
-//            float distance = velocitySquared / (2.0f * Math.abs(mDeceleration));
-            float distance = velocitySquared / (2.0f * Math.abs(mDeceleration)) * 0.1f;
+//            float distance = velocitySquared / (2.0f * Math.abs(mDeceleration)) * 0.1f;
             final float sign = Math.signum(mVelocity);
 
             if (distance > mOver) {
@@ -871,9 +871,9 @@ public class OverScroller {
             mOver = (int) distance;
             mState = BALLISTIC;
             mFinal = mStart + (int) (mVelocity > 0 ? distance : -distance);
+            mDuration = - (int) (1000.0f * mVelocity / mDeceleration);
             // XXX
-//            mDuration = - (int) (1000.0f * mVelocity / mDeceleration);
-            mDuration = - (int) (1000.0f * mVelocity / mDeceleration * 0.6);
+//            mDuration = - (int) (1000.0f * mVelocity / mDeceleration * 0.6);
 
             Log.i(TAG, "onEdgeReached: distance:" + distance + " mFinal:" + mFinal + " mDuration:" + mDuration);
         }
