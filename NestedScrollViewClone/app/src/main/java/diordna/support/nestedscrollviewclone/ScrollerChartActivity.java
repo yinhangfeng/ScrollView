@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.animation.AnimationUtils;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -26,12 +25,30 @@ import diordna.widget.OverScroller;
 public class ScrollerChartActivity extends AppCompatActivity {
     private static final String TAG = "ScrollerChartActivity";
 
+    private float DENSITY;
+
+    // 单位 px
+    private int NORMAL_VELOCITY;
+    private int MIN_L;
+    private int MAX_L;
+    private int OVER;
+
+    // 图表纵轴坐标单位 dp
     private LineChart mChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scroller_chart);
+
+        DENSITY = getResources().getDisplayMetrics().density;
+
+        NORMAL_VELOCITY = (int) (2500 * DENSITY);
+        MIN_L = (int) (500 * DENSITY);
+        MAX_L = (int) (2000 * DENSITY);
+        OVER = (int) (500 * DENSITY);
+
+        Log.i(TAG, "onCreate: DENSITY:" + DENSITY + " NORMAL_VELOCITY:" + NORMAL_VELOCITY);
 
         mChart = (LineChart) findViewById(R.id.line_chart);
         mChart.setDrawGridBackground(false);
@@ -56,19 +73,19 @@ public class ScrollerChartActivity extends AppCompatActivity {
         //xAxis.setValueFormatter(new MyCustomXAxisValueFormatter());
         //xAxis.addLimitLine(llXAxis); // add x-axis limit line
 
-        LimitLine ll1 = new LimitLine(1500f, "Max");
+        LimitLine ll1 = new LimitLine(MAX_L / DENSITY, "Max");
         ll1.setLineWidth(2f);
         ll1.enableDashedLine(10f, 10f, 0f);
         ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
         ll1.setTextSize(10f);
 
-        LimitLine ll2 = new LimitLine(500f, "Min");
+        LimitLine ll2 = new LimitLine(MIN_L / DENSITY, "Min");
         ll2.setLineWidth(2f);
         ll2.enableDashedLine(10f, 10f, 0f);
         ll2.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
         ll2.setTextSize(10f);
 
-        LimitLine ll3 = new LimitLine(2000f, "Over");
+        LimitLine ll3 = new LimitLine((MAX_L + OVER) / DENSITY, "Over");
         ll3.setLineWidth(2f);
         ll3.enableDashedLine(10f, 10f, 0f);
         ll3.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
@@ -79,7 +96,7 @@ public class ScrollerChartActivity extends AppCompatActivity {
         leftAxis.addLimitLine(ll1);
         leftAxis.addLimitLine(ll2);
         leftAxis.addLimitLine(ll3);
-        leftAxis.setAxisMaximum(2100f);
+        leftAxis.setAxisMaximum((MAX_L + OVER + OVER / 10) / DENSITY);
         leftAxis.setAxisMinimum(0f);
         //leftAxis.setYOffset(20f);
         leftAxis.enableGridDashedLine(10f, 10f, 0f);
@@ -89,7 +106,7 @@ public class ScrollerChartActivity extends AppCompatActivity {
         leftAxis.setDrawLimitLinesBehindData(true);
 
         YAxis rightAxis = mChart.getAxisRight();
-        rightAxis.setAxisMaximum(5000f);
+        rightAxis.setAxisMaximum(NORMAL_VELOCITY * 2 / DENSITY);
         rightAxis.setAxisMinimum(0);
 
         initLineData();
@@ -101,6 +118,13 @@ public class ScrollerChartActivity extends AppCompatActivity {
         mChart.setData(data);
     }
 
+    /**
+     * @param time 时间
+     * @param l 距离
+     * @param v 速度
+     * @param timeVc dl 中间点的时间值  将计算速度近似作为该点速度
+     * @param vc dl/dt 得到的计算速度
+     */
     private void addEntry(float time, float l, float v, float timeVc, float vc) {
         Log.d(TAG, "addEntry() called with " + "time = " + time + ", l = " + l + ", v = " + v + ", timeVc = " + timeVc + ", vc = " + vc + "");
 
@@ -149,10 +173,10 @@ public class ScrollerChartActivity extends AppCompatActivity {
         }
 
 
-        data.addEntry(new Entry(time, l), 0);
-        data.addEntry(new Entry(time, v), 1);
+        data.addEntry(new Entry(time, l / DENSITY), 0);
+        data.addEntry(new Entry(time, v / DENSITY), 1);
         if (timeVc >= 0) {
-            data.addEntry(new Entry(timeVc, vc), 2);
+            data.addEntry(new Entry(timeVc, vc / DENSITY), 2);
         }
 
         data.notifyDataChanged();
@@ -202,11 +226,11 @@ public class ScrollerChartActivity extends AppCompatActivity {
     public void test1() {
         reset();
         final OverScroller overScroller = new OverScroller(this);
-        int startL = 600;
-        int startV = 3000;
-        int minL = 500;
-        int maxL = 1500;
-        int overL = 500;
+        int startL = (int) (OVER * 1.1);
+        int startV = NORMAL_VELOCITY;
+        int minL = MIN_L;
+        int maxL = MAX_L;
+        int overL = OVER;
         overScroller.fling(0, startL, 0, startV, 0, 0, minL, maxL, 0, overL);
 
         startAnimation(overScroller, startL, startV, false);
@@ -216,11 +240,11 @@ public class ScrollerChartActivity extends AppCompatActivity {
     public void test2() {
         reset();
         final OverScroller overScroller = new OverScroller(this);
-        int startL = 1000;
-        int startV = 4000;
-        int minL = 500;
-        int maxL = 1500;
-        int overL = 500;
+        int startL = MAX_L - OVER;
+        int startV = NORMAL_VELOCITY;
+        int minL = MIN_L;
+        int maxL = MAX_L;
+        int overL = OVER;
         overScroller.fling(0, startL, 0, startV, 0, 0, minL, maxL, 0, overL);
 
         startAnimation(overScroller, startL, startV, false);
@@ -231,10 +255,10 @@ public class ScrollerChartActivity extends AppCompatActivity {
         reset();
         final OverScroller overScroller = new OverScroller(this);
         int startL = 0;
-        int startV = 10;
-        int minL = 500;
-        int maxL = 1500;
-        int overL = 500;
+        int startV = 100;
+        int minL = MIN_L;
+        int maxL = MAX_L;
+        int overL = OVER;
         overScroller.fling(0, startL, 0, startV, 0, 0, minL, maxL, 0, overL);
 
         startAnimation(overScroller, startL, startV, false);
@@ -244,11 +268,11 @@ public class ScrollerChartActivity extends AppCompatActivity {
     public void test4() {
         reset();
         final OverScroller overScroller = new OverScroller(this);
-        int startL = 0;
-        int startV = 4000;
-        int minL = 500;
-        int maxL = 1500;
-        int overL = 500;
+        int startL = OVER / 2;
+        int startV = NORMAL_VELOCITY;
+        int minL = MIN_L;
+        int maxL = MAX_L;
+        int overL = OVER;
         overScroller.fling(0, startL, 0, startV, 0, 0, minL, maxL, 0, overL);
 
         startAnimation(overScroller, startL, startV, false);
@@ -258,11 +282,11 @@ public class ScrollerChartActivity extends AppCompatActivity {
     public void test5() {
         reset();
         final OverScroller overScroller = new OverScroller(this);
-        int startL = 100;
-        int startV = 6000;
-        int minL = 500;
-        int maxL = 1500;
-        int overL = 500;
+        int startL = OVER / 2;
+        int startV = (int) (NORMAL_VELOCITY * 2.5);
+        int minL = MIN_L;
+        int maxL = MAX_L;
+        int overL = OVER;
         overScroller.fling(0, startL, 0, startV, 0, 0, minL, maxL, 0, overL);
 
         startAnimation(overScroller, startL, startV, false);
@@ -275,11 +299,11 @@ public class ScrollerChartActivity extends AppCompatActivity {
         reset();
         final OverScroller overScroller = new OverScroller(this);
 
-        int startL = 500;
+        int startL = 0;
         float startV;
-        int minL = 0;
-        int maxL = 1000;
-        int overL = 500;
+        int minL = MIN_L;
+        int maxL = MAX_L;
+        int overL = OVER;
         overScroller.springBack(0, startL, 0, 0, minL, maxL);
         startV = overScroller.getCurrVelocity();
 
@@ -291,10 +315,10 @@ public class ScrollerChartActivity extends AppCompatActivity {
         final OverScroller overScroller = new OverScroller(this);
 
         int startL = 0;
-        int dl = 1000;
-        int minL = 0;
-        int maxL = 1000;
-        int overL = 500;
+        int dl = MAX_L;
+        int minL = MIN_L;
+        int maxL = MAX_L;
+        int overL = OVER;
         int duration = 3000;
         overScroller.startScroll(0, startL, 0, dl, duration);
         float startV = overScroller.getCurrVelocity();

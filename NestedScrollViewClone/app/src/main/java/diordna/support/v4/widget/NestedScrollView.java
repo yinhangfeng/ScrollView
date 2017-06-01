@@ -850,6 +850,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                     int initialVelocity = (int) VelocityTrackerCompat.getYVelocity(velocityTracker,
                             mActivePointerId);
 
+                    Log.i(TAG, "onTouchEvent: ACTION_UP initialVelocity:" + initialVelocity + " mMinimumVelocity:" + mMinimumVelocity + " mMaximumVelocity:" + mMaximumVelocity);
                     if ((Math.abs(initialVelocity) > mMinimumVelocity)) {
                         // flingWithNestedDispatch 没有考虑springBack 感觉有问题
                         flingWithNestedDispatch(-initialVelocity);
@@ -964,9 +965,6 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
             int maxOverScrollX, int maxOverScrollY,
             boolean isTouchEvent) {
 
-        // XXX
-        maxOverScrollY = getHeight() / 4;
-
         final int overScrollMode = getOverScrollMode();
         final boolean canScrollHorizontal =
                 computeHorizontalScrollRange() > computeHorizontalScrollExtent();
@@ -986,6 +984,9 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
         if (!overScrollVertical) {
             maxOverScrollY = 0;
         }
+
+        // XXX 增加
+        maxOverScrollY = getHeight() / 4;
 
         // Clamp values if at the limits and record
         final int left = -maxOverScrollX;
@@ -1724,8 +1725,12 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
             int height = getHeight() - getPaddingBottom() - getPaddingTop();
             int bottom = getChildAt(0).getHeight();
 
+//            mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, 0,
+//                    Math.max(0, bottom - height), 0, height / 2);
+
+            // XXX 修改overY
             mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, 0,
-                    Math.max(0, bottom - height), 0, /* height / 2 */ height / 4); // XXX 修改overY
+                    Math.max(0, bottom - height), 0, height / 4);
 
             ViewCompat.postInvalidateOnAnimation(this);
         }
