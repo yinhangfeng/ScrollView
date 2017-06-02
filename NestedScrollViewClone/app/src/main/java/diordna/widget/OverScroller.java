@@ -580,7 +580,9 @@ public class OverScroller {
         private int mState = SPLINE;
 
         // Constant gravity value, used in the deceleration phase.
-        private static final float GRAVITY = 2000.0f;
+//        private static final float GRAVITY = 2000.0f;
+        // XXX
+        private static final float GRAVITY = 40000.0f;
 
         // A context-specific coefficient adjusted to physical values.
         private float mPhysicalCoeff;
@@ -652,6 +654,7 @@ public class OverScroller {
 
         /*
          * Get a signed deceleration that will reduce the velocity.
+         * overscroll 阶段使用
          */
         static private float getDeceleration(int velocity) {
             return velocity > 0 ? -GRAVITY : GRAVITY;
@@ -710,7 +713,6 @@ public class OverScroller {
             mFinished = false;
         }
 
-        // TODO 研究springback 如何调整速度
         boolean springback(int start, int min, int max) {
             mFinished = true;
 
@@ -740,9 +742,9 @@ public class OverScroller {
             // TODO take velocity into account
             mVelocity = -delta; // only sign is used
             mOver = Math.abs(delta);
-            mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / mDeceleration));
-            // XXX
-//            mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / mDeceleration) * 0.6);
+//            mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / mDeceleration));
+            // XXX 反弹的事件应该改为根据当前over值成一定比例的一个值 不应该考虑mDeceleration
+            mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / (mDeceleration * 0.2)));
         }
 
         void fling(int start, int velocity, int min, int max, int over) {
@@ -779,7 +781,7 @@ public class OverScroller {
                 adjustDuration(mStart, mFinal, max);
                 mFinal = max;
             }
-            Log.i(TAG, "fling() called with " + "start = " + start + ", velocity = " + velocity + ", min = " + min + ", max = " + max + ", over = " + over + " ||| mFinal:" + mFinal);
+            Log.i(TAG, "fling() called with " + "start = " + start + ", velocity = " + velocity + ", min = " + min + ", max = " + max + ", over = " + over + " ||| mFinal:" + mFinal + " mDuration:" + mDuration + " mSplineDuration:" + mSplineDuration);
         }
 
         private double getSplineDeceleration(int velocity) {
@@ -858,8 +860,6 @@ public class OverScroller {
             // The float cast below is necessary to avoid integer overflow.
             final float velocitySquared = (float) mVelocity * mVelocity;
             float distance = velocitySquared / (2.0f * Math.abs(mDeceleration));
-            // XXX
-//            float distance = velocitySquared / (2.0f * Math.abs(mDeceleration)) * 0.1f;
             final float sign = Math.signum(mVelocity);
 
             if (distance > mOver) {
@@ -872,10 +872,6 @@ public class OverScroller {
             mState = BALLISTIC;
             mFinal = mStart + (int) (mVelocity > 0 ? distance : -distance);
             mDuration = - (int) (1000.0f * mVelocity / mDeceleration);
-            // XXX
-//            mDuration = - (int) (1000.0f * mVelocity / mDeceleration * 0.6);
-
-            Log.i(TAG, "onEdgeReached: distance:" + distance + " mFinal:" + mFinal + " mDuration:" + mDuration);
         }
 
         boolean continueWhenFinished() {

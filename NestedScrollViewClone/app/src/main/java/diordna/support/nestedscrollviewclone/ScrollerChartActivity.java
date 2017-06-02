@@ -137,11 +137,12 @@ public class ScrollerChartActivity extends AppCompatActivity {
             lset.setColor(Color.BLUE);
             lset.setCircleColor(Color.BLUE);
             lset.setLineWidth(2f);
-            lset.setCircleRadius(3f);
+            lset.setCircleRadius(2f);
             lset.setHighLightColor(Color.rgb(244, 117, 117));
 //            lset.setValueTextColor(Color.WHITE);
             lset.setValueTextSize(9f);
             lset.setDrawValues(false);
+            lset.setDrawCircleHole(false);
             data.addDataSet(lset);
 
             LineDataSet vset = new LineDataSet(null, "V");
@@ -149,11 +150,12 @@ public class ScrollerChartActivity extends AppCompatActivity {
             vset.setColor(Color.GREEN);
             vset.setCircleColor(Color.GREEN);
             vset.setLineWidth(2f);
-            vset.setCircleRadius(3f);
+            vset.setCircleRadius(2f);
             vset.setHighLightColor(Color.rgb(244, 117, 117));
 //            vset.setValueTextColor(Color.WHITE);
             vset.setValueTextSize(9f);
             vset.setDrawValues(false);
+            vset.setDrawCircleHole(false);
             data.addDataSet(vset);
         }
 
@@ -164,11 +166,12 @@ public class ScrollerChartActivity extends AppCompatActivity {
             vcset.setColor(Color.YELLOW);
             vcset.setCircleColor(Color.YELLOW);
             vcset.setLineWidth(2f);
-            vcset.setCircleRadius(3f);
+            vcset.setCircleRadius(2f);
             vcset.setHighLightColor(Color.rgb(244, 117, 117));
             //            vset.setValueTextColor(Color.WHITE);
             vcset.setValueTextSize(9f);
             vcset.setDrawValues(false);
+            vcset.setDrawCircleHole(false);
             data.addDataSet(vcset);
         }
 
@@ -213,8 +216,8 @@ public class ScrollerChartActivity extends AppCompatActivity {
                     lastTime = currentAnimationTimeMillis;
                     lastL = currL;
 
-                    addEntry((float) time, overScroller.getCurrY(), overScroller.getCurrVelocity(), (float) timeVC, (float) (dl / dt * 1000));
                     mChart.postOnAnimation(this);
+                    addEntry((float) time, overScroller.getCurrY(), overScroller.getCurrVelocity(), (float) timeVC, (float) (dl / dt * 1000));
                 }
             }
         };

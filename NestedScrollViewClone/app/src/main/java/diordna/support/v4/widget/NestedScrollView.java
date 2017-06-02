@@ -853,6 +853,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                     Log.i(TAG, "onTouchEvent: ACTION_UP initialVelocity:" + initialVelocity + " mMinimumVelocity:" + mMinimumVelocity + " mMaximumVelocity:" + mMaximumVelocity);
                     if ((Math.abs(initialVelocity) > mMinimumVelocity)) {
                         // flingWithNestedDispatch 没有考虑springBack 感觉有问题
+                        // 速度需要取反 应为Scroller中正的速度使数值增大 但手势方向与scroll值是相反的
                         flingWithNestedDispatch(-initialVelocity);
                     } else if (mScroller.springBack(getScrollX(), getScrollY(), 0, 0, 0,
                             getScrollRange())) {
@@ -986,7 +987,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
         }
 
         // XXX 增加
-        maxOverScrollY = getHeight() / 4;
+        maxOverScrollY = getHeight() / 3;
 
         // Clamp values if at the limits and record
         final int left = -maxOverScrollX;
@@ -1730,7 +1731,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
 
             // XXX 修改overY
             mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, 0,
-                    Math.max(0, bottom - height), 0, height / 4);
+                    Math.max(0, bottom - height), 0, height / 3);
 
             ViewCompat.postInvalidateOnAnimation(this);
         }
@@ -1742,7 +1743,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
                 && (scrollY < getScrollRange() || velocityY < 0);
         if (!dispatchNestedPreFling(0, velocityY)) {
             dispatchNestedFling(0, velocityY, canFling);
-            // XXX
+            // XXX 解决在overscroll 时 无法fling的问题
 //            if (canFling) {
                 fling(velocityY);
 //            }
