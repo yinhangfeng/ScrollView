@@ -1742,6 +1742,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
         final boolean canFling = (scrollY > 0 || velocityY > 0)
                 && (scrollY < getScrollRange() || velocityY < 0);
         if (!dispatchNestedPreFling(0, velocityY)) {
+            // TODO 第三个参数
             dispatchNestedFling(0, velocityY, canFling);
             // XXX 解决在overscroll 时 无法fling的问题
 //            if (canFling) {

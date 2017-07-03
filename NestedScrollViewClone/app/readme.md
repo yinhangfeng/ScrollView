@@ -13,14 +13,15 @@ API 25
 * 横向 纵向
 * overscroll 时 用手指滑动阻力 速度差
 * 可配置最大overscroll距离
-* 考虑SwipeRefreshLayout 下拉时的插值方式
+* overscroll 时touch 滑动与实际滑动有比例 放手时速度也要考虑比例 参考SwipeRefreshLayout 下拉时的插值方式 比例分段使用不同的值
 * API 26 NestedScroll
-* 设置overscroll时暴露区域的颜色 (设置overscroll区域的View?)
+* 设置overscroll时暴露区域的颜色 两端可分别设置 (设置overscroll区域的View?)
 * 支持多children (在scroll方向需要有确定的宽度(支持WRAP_CONTENT MATCH_PARENT 固定大小)) scroll方向布局方式与LinearLayout相同
 * 支持设置fling 阻力
 * 支持设置OverScroll的一些参数
 * 手指滑动与fling的overscroll具有不同的最大值?
 * overscroll不同方向可配置不同的最大值?
+* 可以设置overscroll模式 EdgeEffect overscroll 或没有
 ## 下拉刷新Header
 * 参考SwipeRefreshLayout的交互
 * Header布局在头部或左部
@@ -48,4 +49,4 @@ maxOver: 最大overscroll距离
   |--------| <- y = scrollRange + maxOver
   |   E    |
 ```
-##
+## touch
