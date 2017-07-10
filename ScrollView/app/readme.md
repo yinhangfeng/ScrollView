@@ -22,6 +22,7 @@ API 25
 * 手指滑动与fling的overscroll具有不同的最大值?
 * overscroll不同方向可配置不同的最大值?
 * 可以设置overscroll模式 EdgeEffect overscroll 或没有
+* 可设置手势捕获的灵敏度 参考ViewPager
 ## 下拉刷新Header
 * 参考SwipeRefreshLayout的交互
 * Header布局在头部或左部
