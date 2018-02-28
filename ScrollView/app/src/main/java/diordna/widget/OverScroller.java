@@ -743,7 +743,7 @@ public class OverScroller {
             mVelocity = -delta; // only sign is used
             mOver = Math.abs(delta);
 //            mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / mDeceleration));
-            // XXX 反弹的事件应该改为根据当前over值成一定比例的一个值 不应该考虑mDeceleration
+            // XXX 反弹的时间应该改为根据当前over值成一定比例的一个值 不应该考虑mDeceleration
             mDuration = (int) (1000.0 * Math.sqrt(-2.0 * delta / (mDeceleration * 0.2)));
         }
 

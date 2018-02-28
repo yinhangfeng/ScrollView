@@ -1014,7 +1014,7 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingPare
         }
 
 //        Log.i(TAG, "overScrollByCompat: clampedY:" + clampedY + " newScrollY:" + newScrollY + " getScrollRange:" + getScrollRange());
-        // 强制OverScroll时springBack
+        // XXX 强制OverScroll时springBack 导致OverScroll无效
 //        if (clampedY) {
 //            mScroller.springBack(newScrollX, newScrollY, 0, 0, 0, getScrollRange());
 //        }
