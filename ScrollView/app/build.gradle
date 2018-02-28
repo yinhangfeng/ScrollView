@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion rootProject.ext.COMPILE_SDK_VERSION
-    buildToolsVersion rootProject.ext.BUILD_TOOLS_VERSION
     defaultConfig {
         applicationId "support.diordna.nestedscrollviewclone"
         minSdkVersion rootProject.ext.MIN_SDK_VERSION
@@ -19,10 +18,10 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "com.android.support:appcompat-v7:${rootProject.ext.SUPPORT_VERSION}"
-    compile "com.android.support:design:${rootProject.ext.SUPPORT_VERSION}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
-    compile project(':library')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.SUPPORT_VERSION}"
+    implementation "com.android.support:design:${rootProject.ext.SUPPORT_VERSION}"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+    implementation project(':library')
 }

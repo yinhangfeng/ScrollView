@@ -1,12 +1,8 @@
 # 代码版本
 https://github.com/android/platform_frameworks_support
-master 2017-05-29
-SHA: efdf532476a3639993c329de0a0d1f8c4fa53343
-NestedScrollView 与support 25.3.1 代码相同
+NestedScrollView 与support 27.0.2 代码相同
 
-RecyclerView 与 supoort 25.3.1 代码相同
-
-API 25
+API 27
 
 # 名词
 * scroll方向
