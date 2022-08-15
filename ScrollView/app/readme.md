@@ -80,3 +80,8 @@ maxOver: 最大overscroll距离
 
 ## springback
 * springback 过程中 不调用 dispatchNestedPreScroll dispatchNestedScroll TYPE_NON_TOUCH
+
+## dx dy 问题 以y方向为例
+touch 向下 y增大
+scroll 向下 scrollY 减小
+dispatchNestedScroll dy 采用 scroll 相同的方式 向下 为负
